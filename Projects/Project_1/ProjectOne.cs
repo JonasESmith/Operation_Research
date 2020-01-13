@@ -9,7 +9,6 @@ using System;
 using Project_1.classes;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
-using System.Linq;
 
 namespace Project_01
 {
@@ -21,17 +20,49 @@ namespace Project_01
             List<char> variable_names = new List<char>() { 'a', 'b', 'c', 'd', 'r', 's' };
             List<char> solution_names = new List<char>() { 'x', 'y' };
 
+            TestCases test_cases = new TestCases();
+
+            // flip this bit to begin testing
+            bool testing = false;
+            int  test_index = 0;
+
+
             PrintHeader();
             PrintPurpose();
             PrintDivider();
 
+            if(testing)
+            {
+                Console.WriteLine("Press any key while testing");
+            }
+
             while (user_is_iterating)
             {
-                List<variable> user_inputs = GetUserInput(variable_names);
+                List<variable> user_inputs = new List<variable>();
+
+                if (testing) {
+                    if(test_index >= test_cases.cases.Count) {
+                        goto stopTesting;
+                    }
+
+                    user_inputs = test_cases.cases[test_index];
+                    test_index++;
+                }
+                else {
+                    user_inputs = GetUserInput(variable_names);
+                }
+
                 Vector<double> solution    = CalculateSolutions(user_inputs);
 
                 PrintSolutions(solution, solution_names);
-                UserIterations(ref user_is_iterating);
+                UserIterations(ref user_is_iterating, testing);
+            }
+
+            stopTesting:;
+            if(testing)
+            {
+                Console.WriteLine("Testing is finished");
+                Console.ReadLine();
             }
         }
 
@@ -52,9 +83,8 @@ namespace Project_01
 
         static string GetBuffer(string value, int length)
         {
-            int buffer_length = (length - Convert.ToInt32(value.Length)) / 2;
-
-            string buffer = "";
+            int    buffer_length = (length - Convert.ToInt32(value.Length)) / 2;
+            string buffer        = "";
 
             for(int i = 0; i < buffer_length; i++)
                 buffer += " ";
@@ -75,11 +105,11 @@ namespace Project_01
 
         }
 
-        static void PrintDivider()
-        {
-            Console.WriteLine("________________________________\n");
-        }
+        static void PrintDivider() => Console.WriteLine("________________________________\n");
 
+        /// <summary>
+        ///     Prompts the user to enter a variable based on the list given 
+        /// </summary>
         static List<variable> GetUserInput(List<char> variables)
         {
             List<variable> user_inputs = new List<variable>();
@@ -92,6 +122,12 @@ namespace Project_01
             return user_inputs;
         }
 
+        /// <summary>
+        /// Only allows numbers . and - to be entered into the fields
+        /// </summary>
+        /// <param name="var_name"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         static variable GetVariableInput(char var_name, int index)
         {
             bool user_input_wrong = true;
@@ -138,6 +174,12 @@ namespace Project_01
                                 _val += ".";
                                 Console.Write(key.KeyChar);
                             }
+
+                            if(key.Key == ConsoleKey.OemMinus)
+                            {
+                                _val += "-";
+                                Console.Write(key.KeyChar);
+                            }
                         }
                         else
                         {
@@ -166,6 +208,11 @@ namespace Project_01
             return new variable(var_name, input);
         }
 
+        /// <summary>
+        ///     Moves the user_input variable list into a set of arrays used to calculate the values.
+        /// </summary>
+        /// <param name="user_input"></param>
+        /// <returns></returns>
         static Vector<double> CalculateSolutions(List<variable> user_input)
         {
             // Using some linear algebra we can user Ax = b
@@ -174,10 +221,14 @@ namespace Project_01
             int n = 2;
             double[,] matrix_A = new double[n,n];
 
-            for(int i = 0; i <n; i++) {
+            int index = 0;
+
+            for(int i = 0; i <n; i++) 
+            {
                 for(int k = 0; k < n; k++)
                 {
-                    matrix_A[i, k] = user_input[i + k].value;
+                    matrix_A[i, k] = user_input[index].value;
+                    index++;
                 }
             }
 
@@ -185,9 +236,9 @@ namespace Project_01
 
             // Build the coefficient vector b
             double[] matrix_B = new double[n];
-            int index = Convert.ToInt32( Math.Pow(n, 2) );
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++) 
+            {
                 matrix_B[i] = user_input[index].value;
 
                 index++;
@@ -209,11 +260,23 @@ namespace Project_01
             for (int i = 0; i < solutions.Count; i++)
             {
                 string output = "";
-                // the solutions is negative so we move the margin over one characters
-                if(solutions[i] < 0)
-                    output = string.Format("{0} ={1}", solution_names[i], solutions[i].ToString("N5"));
-                else
-                    output = string.Format("{0} = {1}", solution_names[i], solutions[i].ToString("N5"));
+
+                // there is an infinite number of intersections.
+                if (Double.IsNaN(solutions[i])) {
+                    output = string.Format("{0} ={1}", solution_names[i], " Infinitely many");
+                }
+                // If the object is not a number therefore we know we have a zero in the denominator
+                else if (Double.IsInfinity(solutions[i])) {
+                    output = string.Format("{0} ={1}", solution_names[i], " No solution"); 
+                }
+                // one solution.
+                else {
+                    // the solutions is negative so we move the margin over one characters
+                    if (solutions[i] < 0)
+                        output = string.Format("{0} ={1}", solution_names[i], solutions[i].ToString("N5"));
+                    else
+                        output = string.Format("{0} = {1}", solution_names[i], solutions[i].ToString("N5"));
+                }
 
                 string buffer = GetBuffer(output, 32);
 
@@ -223,33 +286,40 @@ namespace Project_01
             Console.WriteLine();
         }
 
-        static void UserIterations(ref bool user_iteration)
+        static void UserIterations(ref bool user_iteration, bool testing)
         {
-            bool correct_input = true;
-
-            while (correct_input)
+            if(!testing)
             {
+                bool correct_input = true;
 
-                Console.WriteLine("   Would you like to continue?");
-                Console.Write("        [y]es or [n]o ) : ");
+                while (correct_input)
+                {
 
-                string user_input = Console.ReadLine().ToLower();
+                    Console.WriteLine("   Would you like to continue?");
+                    Console.Write("        [y]es or [n]o ) : ");
 
-                if (user_input == "y")
-                {
-                    correct_input = false;
-                    Console.Clear();
-                    Iterate();
+                    string user_input = Console.ReadLine().ToLower();
+
+                    if (user_input == "y")
+                    {
+                        correct_input = false;
+                        Console.Clear();
+                        Iterate();
+                    }
+                    else if (user_input == "n")
+                    {
+                        user_iteration = false;
+                        correct_input = false;
+                    }
+                    else
+                    {
+                        Console.Write(new String(' ', Console.BufferWidth));
+                    }
                 }
-                else if (user_input == "n")
-                {
-                    user_iteration = false;
-                    correct_input = false;
-                }
-                else
-                {
-                    Console.Write(new String(' ', Console.BufferWidth));
-                }
+            }
+            else
+            {
+                Console.ReadLine();
             }
         }
 

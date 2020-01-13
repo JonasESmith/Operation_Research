@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="classes\TestCases.cs" />
     <Compile Include="classes\variable.cs" />
     <Compile Include="ProjectOne.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
