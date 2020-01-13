@@ -1,0 +1,9 @@
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\bin\Debug\Project_1.exe.config
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\bin\Debug\Project_1.exe
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\bin\Debug\Project_1.pdb
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\obj\Debug\Project_01.csprojAssemblyReference.cache
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\obj\Debug\Project_1.exe
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\obj\Debug\Project_1.pdb
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\bin\Debug\MathNet.Numerics.dll
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\bin\Debug\MathNet.Numerics.xml
+C:\Users\Jonas\Desktop\gitProj\Operation_Research\Projects\Project_1\obj\Debug\Project_01.csproj.CopyComplete
