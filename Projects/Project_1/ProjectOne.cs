@@ -19,6 +19,8 @@ namespace Project_01
             bool user_is_iterating = true;
             List<char> variable_names = new List<char>() { 'a', 'b', 'c', 'd', 'r', 's' };
             List<char> solution_names = new List<char>() { 'x', 'y' };
+            int row_n = 2;
+            int col_n = 2;
 
             TestCases test_cases = new TestCases();
 
@@ -57,7 +59,7 @@ namespace Project_01
                     user_inputs = GetUserInput(variable_names);
                 }
 
-                Vector<double> solution = CalculateSolutions(user_inputs);
+                Vector<double> solution = CalculateSolutions(user_inputs, row_n, col_n);
 
                 PrintSolutions(solution, solution_names, user_inputs, testing);
                 UserIterations(ref user_is_iterating, testing);
@@ -248,18 +250,23 @@ namespace Project_01
         /// </summary>
         /// <param name="user_input"></param>
         /// <returns></returns>
-        static Vector<double> CalculateSolutions(List<variable> user_input)
+        static Vector<double> CalculateSolutions(List<variable> user_input, int row_n, int col_n)
         {
-            // Using some linear algebra we can user Ax = b
+            // Initialize the row and col number given when the application first runs.
+            //      This can be changed easily enough with the lists to allow this to work
+            //      with any number of linear equations and variables.
+            int row = row_n;
+            int col = col_n;
+
+            // Using some linear algebra we can use Ax = b
             // Build matrix A
-            int n = 2;
-            double[,] matrix_A = new double[n, n];
+            double[,] matrix_A = new double[row, row];
 
             int index = 0;
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < row; i++)
             {
-                for (int k = 0; k < n; k++)
+                for (int k = 0; k < col; k++)
                 {
                     matrix_A[i, k] = user_input[index].value;
                     index++;
@@ -269,9 +276,9 @@ namespace Project_01
             var A = Matrix<double>.Build.DenseOfArray(matrix_A);
 
             // Build the coefficient vector b
-            double[] matrix_B = new double[n];
+            double[] matrix_B = new double[row];
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < col; i++)
             {
                 matrix_B[i] = user_input[index].value;
 
