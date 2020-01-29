@@ -1,5 +1,6 @@
 __author__ = "Justin Overstreet"
 
+import os
 from pulp import *
 import pandas as pd
 
@@ -10,7 +11,8 @@ prob = LpProblem("Diet_Optimization", LpMaximize)
 # IMPORTANT 
 # You could theoretically import the entire sonic list to an excel sheet 
 # with the specified columns and none of code would need changed.
-df = pd.read_excel("Projects/Project_2/sonic_diet_optimizer/nutrition_info.xlsx", nrows=365)
+working_directory = os.path.dirname(os.path.normpath(__file__))
+df = pd.read_excel(working_directory + "\\nutrition_info.xlsx", nrows=365)
 
 # Create a list of all the food items in the excel sheet
 food_items = list(df['Food Items'])
