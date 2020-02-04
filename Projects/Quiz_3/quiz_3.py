@@ -31,6 +31,4 @@ print(f"Status: {LpStatus[prob.status]}")
 print( '{0}  {1}  {2}'
         .format(' x ', ' y ', ' z ') )
 print( '{0}, {1}, {2}'
-        .format(value(x), value(y), value(z)) )
-
-
+        .format(value(x), value(y), value(z)))
