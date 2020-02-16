@@ -1,4 +1,4 @@
-## Project 2
+## Project 3
 > 2/16/2020
 
 * Modeled an attempt for a near-optimal solution regarding the third projects constraints.
