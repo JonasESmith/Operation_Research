@@ -6,8 +6,8 @@ namespace Steepest_Descent
     {
         static void Main(string[] args)
         {
-            //Solve starting from an initial starting vector.
-            solve(new Vector(2, -3.1));
+            //Solve starting from an initial starting vector and the specified number of iterations.
+            solve(new Vector(1, 0.5), 2);
         }
 
         //Function f(x,y)
@@ -30,7 +30,7 @@ namespace Steepest_Descent
             return new Vector(v.y * (2 * v.y + 6) * (1 - v.x), -v.x * (v.x-2) * (2 * v.y + 3));
         }
 
-        static void solve(Vector initial)
+        static void solve(Vector initial, int iterations)
         {
             Vector x = initial;
 
@@ -40,7 +40,7 @@ namespace Steepest_Descent
 
             bool diverge = false;
 
-            for (int i = 0; i <= 10; i++)
+            for (int i = 0; i <= iterations; i++)
             {
                 //If the function value is large, assume it is diverging.
                 if (Math.Abs(f(x)) > 1000000)
