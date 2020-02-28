@@ -17,14 +17,12 @@ def divide_interval(a, b, count=4):
 
 
 def three_point_search(func, a, b, tol=1e-2):
-    '''Implements a system of three point interval search through successive segment elimination.'''
-    f_vals = []
+    '''Implements a system of three point interval search through successive segment elimination.'''    
     three_points = divide_interval(a, b)
     five_points = three_points.copy()
     five_points.insert(0, a)
     five_points.append(b)
-    for i in range(0, len(three_points)):
-        f_vals.append(function(three_points[i]))
+    f_vals = [func(three_points[i]) for i in range(0, len(three_points))]
     index_of_min = f_vals.index(min(f_vals)) + 1
     if (b - a < tol):
         return five_points[index_of_min]

@@ -1,9 +1,14 @@
 import numpy as np 
 
+
 def function(x):
+    '''Defines a function to evaluate for given a unimodal interval.
+    Note: To search for a minimum, use the negative form of the equation.'''
     return -(x**3 - x + 1)
 
+
 def fibonacci_numbers(signature, n):
+    '''Returns a sequence of fibonacci numbers out to a specified count.'''
     n += 1
     for _ in range(0, n - len(signature)):
         signature.append(sum(signature[-2:]))
@@ -11,6 +16,8 @@ def fibonacci_numbers(signature, n):
 
 
 def fibonacci_search(a, b, func, epsilon=1):
+    '''Searches for a maximum/minimum over a unimodal interval by progressively
+    eliminating portions of the interval.'''
     smallest = (b - a) / epsilon
     fib = fibonacci_numbers([1, 1], int(smallest))
     for N in range(0, len(fib)):
