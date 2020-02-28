@@ -7,7 +7,7 @@ namespace Steepest_Descent
         static void Main(string[] args)
         {
             //Solve starting from an initial starting vector and the specified number of iterations.
-            solve(new Vector(1, 0.5), 2);
+            solve(new Vector(1, 1), 2);
         }
 
         //Function f(x,y)
@@ -76,7 +76,11 @@ namespace Steepest_Descent
 
             //Calculate the gradient at v.
             Vector gradient = grad(v);
-            
+
+            //If the gradient is 0, choose lambda = 0
+            if (gradient.x == 0 && gradient.y == 0)
+                return 0;
+
             //Loop from -50 to 50 incrementing by 0.002
             for (double l = -50; l <= 50; l = Math.Round(l + 0.002, 4))
             {
