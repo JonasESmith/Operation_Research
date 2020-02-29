@@ -7,7 +7,7 @@ namespace Steepest_Descent
         static void Main(string[] args)
         {
             //Solve starting from an initial starting vector and the specified number of iterations.
-            solve(new Vector(1, 1), 2);
+            solve(new Vector(0.5, 0.5), 10);
         }
 
         //Function f(x,y)
@@ -27,7 +27,7 @@ namespace Steepest_Descent
             //return new Vector(8 * v.x - 4 * v.y, 4 * v.y - 4 * v.x);
 
             //1b:
-            return new Vector(v.y * (2 * v.y + 6) * (1 - v.x), -v.x * (v.x-2) * (2 * v.y + 3));
+            return new Vector(-v.y * (v.y + 3) * (2 * v.x - 2), -v.x * (v.x - 2) * (2 * v.y + 3));
         }
 
         static void solve(Vector initial, int iterations)
@@ -70,60 +70,82 @@ namespace Steepest_Descent
         //Find the value of lambda that will minimize the function.
         static double findMinLambda(Vector v)
         {
-            //Keep track of our current best function value and the associated lambda value.
-            double min = double.MaxValue;
-            double best = 0;
+            //Calculate the gradient at v.
+            Vector gradient = grad(v);
+
+            double bestLambda = 0;
+            double bestValue = Double.MaxValue;
+
+            //Loop from -25 to 25 incrementing by 0.05.
+            for (double i = -25; i <= 25; i = Math.Round(i + 0.05, 4))
+            {
+                //Use an iterative method to find a minimum with a max of 1000 iterations.
+                double l = iterateToMinimum(v, i, 1000);
+
+                //Is the lambda value is NaN then the iteration diverged.
+                if (Double.IsNaN(l))
+                    continue;
+
+                if (f(v + (l * gradient)) < bestValue)
+                {
+                    bestLambda = l;
+                    bestValue = f(v + (l * gradient));
+                }
+            }
+
+            return Math.Round(bestLambda, 4);
+        }
+
+        static double iterateToMinimum(Vector v, double l, int iterationsRemaining)
+        {
+            //If we are out of iterations, assume we are diverging.
+            if (iterationsRemaining <= 0)
+                return Double.NaN;
 
             //Calculate the gradient at v.
             Vector gradient = grad(v);
 
-            //If the gradient is 0, choose lambda = 0
-            if (gradient.x == 0 && gradient.y == 0)
-                return 0;
+            double fVal = f(v + (l * gradient));
+            double delta = 0.05;
+            if (f(v + ((l + delta) * gradient)) < fVal)
+                return iterateToMinimum(v, l + delta, iterationsRemaining - 1);
+            else if (f(v + ((l - delta) * gradient)) < fVal)
+                return iterateToMinimum(v, l - delta, iterationsRemaining - 1);
+            else
+                return l;
+        }
 
-            //Loop from -50 to 50 incrementing by 0.002
-            for (double l = -50; l <= 50; l = Math.Round(l + 0.002, 4))
+        class Vector
+        {
+            public double x;
+            public double y;
+
+            public Vector(double x, double y)
             {
-                if (f(v + (l * gradient)) < min) {
-                    min = f(v + (l * gradient));
-                    best = l;
-                }
+                this.x = x;
+                this.y = y;
             }
 
-            return best;
+            public Vector round(int decimals)
+            {
+                return new Vector(Math.Round(x, decimals), Math.Round(y, decimals));
+            }
+
+            public static Vector operator +(Vector v1, Vector v2)
+            {
+                return new Vector(v1.x + v2.x, v1.y + v2.y);
+            }
+
+            public static Vector operator *(double s, Vector v)
+            {
+                return new Vector(s * v.x, s * v.y);
+            }
+
+            public override String ToString()
+            {
+                return "<" + x + ", " + y + ">";
+            }
         }
+
     }
-
-    class Vector
-    {
-        public double x;
-        public double y;
-
-        public Vector(double x, double y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-
-        public Vector round(int decimals)
-        {
-            return new Vector(Math.Round(x, decimals), Math.Round(y, decimals));
-        }
-
-        public static Vector operator +(Vector v1, Vector v2)
-        {
-            return new Vector(v1.x + v2.x, v1.y + v2.y);
-        }
-
-        public static Vector operator *(double s, Vector v)
-        {
-            return new Vector(s * v.x, s * v.y);
-        }
-
-        public override String ToString()
-        {
-            return "<" + x + ", " + y + ">";
-        }
-    }
-
 }
