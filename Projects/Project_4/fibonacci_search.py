@@ -15,7 +15,7 @@ def fibonacci_numbers(signature, n):
     return signature[:n]
 
 
-def fibonacci_search(a, b, func, epsilon=1):
+def fibonacci_search(a, b, func, epsilon=1e-2):
     '''Searches for a maximum/minimum over a unimodal interval by progressively
     eliminating portions of the interval.'''
     smallest = (b - a) / epsilon
