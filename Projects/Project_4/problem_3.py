@@ -43,7 +43,7 @@ def convert_to_usable(solved_system):
             ])
     return usable
 
-# Not used for this problem but I made it anyway.
+
 def classify(expr, points):
     fx, fy = part_derive(expr)
     fxx, fyy = part_derive(fx)[0], part_derive(fy)[1]
