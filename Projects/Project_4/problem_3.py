@@ -1,6 +1,9 @@
 import sympy
+import os
+import plotly.graph_objects as go
+import numpy as np
 from prettytable import PrettyTable
-from sympy import symbols, pprint
+from sympy import symbols, pprint, lambdify
 from sympy.solvers.solveset import nonlinsolve
 from sympy.parsing.sympy_parser import parse_expr
 x, y, z = symbols("x y z", real=True)
@@ -64,20 +67,54 @@ def classify(expr, points):
             classifications.append("no conclusion")
     return classifications
 
+
+def plot_stuff(z_data):
+    working_directory = os.path.dirname(os.path.normpath(__file__))
+    x_data = np.linspace(0, 2*np.pi)
+    y_data = np.linspace(0, 2*np.pi)
     
+    fig = go.Figure(go.Surface(
+        contours = {
+            "x": {"show": True, "start": 1.5, "end": 2, "size": 0.04, "color":"white"},
+            "z": {"show": True, "start": 0.5, "end": 0.8, "size": 0.05}
+        },
+        x = x_data,
+        y = y_data,
+        z = z_data
+    ))
+    fig.update_layout(
+        scene = {
+            "xaxis": {"nticks": 20},
+            "zaxis": {"nticks": 4},
+            'camera_eye': {"x": 0, "y": -1, "z": 0.5},
+            "aspectratio": {"x": 1, "y": 1, "z": 0.2}
+        })
+    fig.write_html(working_directory + '\plot\plot.html', auto_open=True)
+
+
 if __name__ == "__main__":
+    # The main portion of the program, determines and classifies
+    # all major points of the function.
     expr = parse_expr("sin(x) + cos(x) + sin(y) - cos(y)", locals())
     points = critical_points(expr)
     classes = (classify(expr, points))
     func_values = get_values(expr, points)
 
-    x = PrettyTable()
-    x.title = f"g(x, y) = {expr}"
-    x.field_names = ["Points", "Values", "Classification"]
+    # Displays the information in tabular format
+    t = PrettyTable()
+    t.title = f"g(x, y) = {expr}"
+    t.field_names = ["Points", "Values", "Classification"]
     for i in range(0, len(func_values)):
-        x.add_row([f"{points[i]}", f"{func_values[i]}", classes[i]])
-    print(x)
+        t.add_row([f"{points[i]}", f"{func_values[i]}", classes[i]])
+    print(t)
 
+    # Plots the function over a [0, 2*pi] x [0, 2*pi] space.
+    func = lambdify(symbols('x y'), expr)
+    x_vals = np.linspace(0, 2*np.pi)
+    y_vals = np.linspace(0, 2*np.pi)
+    X_vals, Y_vals = np.meshgrid(x_vals, y_vals)
+    Z = func(X_vals, Y_vals)
+    plot_stuff(Z)
 '''
 Output:
 
