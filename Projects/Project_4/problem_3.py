@@ -81,7 +81,7 @@ if __name__ == "__main__":
 Output:
 
 +------------------+------------+------------------+
-|      Points      |   Values   |   Classication   |
+|      Points      |   Values   |  Classification  |
 +------------------+------------+------------------+
 | [5*pi/4, 3*pi/4] |     0      |   saddle point   |
 | [5*pi/4, 7*pi/4] | -2*sqrt(2) | relative minimum |
