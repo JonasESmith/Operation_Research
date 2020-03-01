@@ -7,27 +7,33 @@ namespace Steepest_Descent
         static void Main(string[] args)
         {
             //Solve starting from an initial starting vector and the specified number of iterations.
-            solve(new Vector(0.5, 0.5), 10);
+            solve(new Vector(1.1, 1.1), 10);
         }
 
         //Function f(x,y)
         static double f(Vector v)
         {
             //1a:
-            //return 4 * Math.Pow(v.x, 2) - 4 * v.x * v.y + 2 * Math.Pow(v.y, 2);
+            return 4 * Math.Pow(v.x, 2) - 4 * v.x * v.y + 2 * Math.Pow(v.y, 2);
 
             //1b:
-            return -v.x * v.y * (v.x - 2) * (v.y + 3);
+            //return -v.x * v.y * (v.x - 2) * (v.y + 3);
+
+            //1c:
+            //return Math.Pow(1 - v.y, 2) + 100 * Math.Pow(v.x - Math.Pow(v.y, 2), 2);
         }
 
         //Gradient of f(x,y)
         static Vector grad(Vector v)
         {
             //1a:
-            //return new Vector(8 * v.x - 4 * v.y, 4 * v.y - 4 * v.x);
+            return new Vector(8 * v.x - 4 * v.y, 4 * v.y - 4 * v.x);
 
             //1b:
-            return new Vector(-v.y * (v.y + 3) * (2 * v.x - 2), -v.x * (v.x - 2) * (2 * v.y + 3));
+            //return new Vector(-v.y * (v.y + 3) * (2 * v.x - 2), -v.x * (v.x - 2) * (2 * v.y + 3));
+
+            //1c:
+            //return new Vector(200 * (v.x - Math.Pow(v.y, 2)), -2 * (1 - v.y) - 400 * v.y * (v.x - Math.Pow(v.y, 2)));
         }
 
         static void solve(Vector initial, int iterations)
@@ -76,11 +82,11 @@ namespace Steepest_Descent
             double bestLambda = 0;
             double bestValue = Double.MaxValue;
 
-            //Loop from -25 to 25 incrementing by 0.05.
-            for (double i = -25; i <= 25; i = Math.Round(i + 0.05, 4))
+            //Loop from -5 to 5 incrementing by 0.001.
+            for (double i = -5; i <= 5; i = Math.Round(i + 0.001, 6))
             {
                 //Use an iterative method to find a minimum with a max of 1000 iterations.
-                double l = iterateToMinimum(v, i, 1000);
+                double l = iterateToMinimum(v, i, 100);
 
                 //Is the lambda value is NaN then the iteration diverged.
                 if (Double.IsNaN(l))
@@ -93,7 +99,7 @@ namespace Steepest_Descent
                 }
             }
 
-            return Math.Round(bestLambda, 4);
+            return Math.Round(bestLambda, 6);
         }
 
         static double iterateToMinimum(Vector v, double l, int iterationsRemaining)
@@ -106,7 +112,7 @@ namespace Steepest_Descent
             Vector gradient = grad(v);
 
             double fVal = f(v + (l * gradient));
-            double delta = 0.05;
+            double delta = 0.00001;
             if (f(v + ((l + delta) * gradient)) < fVal)
                 return iterateToMinimum(v, l + delta, iterationsRemaining - 1);
             else if (f(v + ((l - delta) * gradient)) < fVal)
