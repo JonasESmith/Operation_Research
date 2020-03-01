@@ -72,6 +72,7 @@ if __name__ == "__main__":
     func_values = get_values(expr, points)
 
     x = PrettyTable()
+    x.title = f"g(x, y) = {expr}"
     x.field_names = ["Points", "Values", "Classification"]
     for i in range(0, len(func_values)):
         x.add_row([f"{points[i]}", f"{func_values[i]}", classes[i]])
