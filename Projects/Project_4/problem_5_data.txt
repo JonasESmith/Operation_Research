@@ -1,0 +1,39 @@
+x: Decimal: -0.774851773445586 --- Exact: 4/3 - 2*sqrt(10)/3
+y: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+z: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+L: Decimal: 1.19371294336140 --- Exact: sqrt(10)/6 + 2/3
+M: Decimal: -3.84990118229706 --- Exact: -22/9 - 4*sqrt(10)/9
+
+x: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+y: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+z: Decimal: 3.44151844011225 --- Exact: 4/3 + 2*sqrt(10)/3
+L: Decimal: 0.139620389971937 --- Exact: 2/3 - sqrt(10)/6
+M: Decimal: -1.03898770659183 --- Exact: -22/9 + 4*sqrt(10)/9
+
+x: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+y: Decimal: 3.44151844011225 --- Exact: 4/3 + 2*sqrt(10)/3
+z: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+L: Decimal: 0.139620389971937 --- Exact: 2/3 - sqrt(10)/6
+M: Decimal: -1.03898770659183 --- Exact: -22/9 + 4*sqrt(10)/9
+
+x: Decimal: 3.44151844011225 --- Exact: 4/3 + 2*sqrt(10)/3
+y: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+z: Decimal: 0.279240779943874 --- Exact: 4/3 - sqrt(10)/3
+L: Decimal: 0.139620389971937 --- Exact: 2/3 - sqrt(10)/6
+M: Decimal: -1.03898770659183 --- Exact: -22/9 + 4*sqrt(10)/9
+
+x: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+y: Decimal: -0.774851773445586 --- Exact: 4/3 - 2*sqrt(10)/3
+z: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+L: Decimal: 1.19371294336140 --- Exact: sqrt(10)/6 + 2/3
+M: Decimal: -3.84990118229706 --- Exact: -22/9 - 4*sqrt(10)/9
+
+x: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+y: Decimal: 2.38742588672279 --- Exact: sqrt(10)/3 + 4/3
+z: Decimal: -0.774851773445586 --- Exact: 4/3 - 2*sqrt(10)/3
+L: Decimal: 1.19371294336140 --- Exact: sqrt(10)/6 + 2/3
+M: Decimal: -3.84990118229706 --- Exact: -22/9 - 4*sqrt(10)/9
+
+Determining min and max values for f(x, y, z)...
+Max Value: 0.268353822346948
+Min Value: -4.41650197049510
