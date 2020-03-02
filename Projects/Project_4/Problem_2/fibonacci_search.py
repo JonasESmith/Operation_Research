@@ -62,6 +62,8 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
     if verbose:
         with open(path + "fibonacci_search_table.txt", 'a') as file:
             file.write(str(table))
+            file.write(f"\nMinimum Point: {mid_point:.3f}\n")
+            file.write(f"Minimum Value: {mid_val:.3f}")
     return mid_point, mid_val
     
 
