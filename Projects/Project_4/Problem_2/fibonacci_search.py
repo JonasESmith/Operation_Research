@@ -51,7 +51,7 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
 
         table.add_row([f"{itr}", f"{a:.3f}", f"{b:.3f}", f"{fib[N]}", f"N/A", f"N/A", f"N/A", f"N/A", f"N/A", f"N/A"])   
 
-    for N in range(n_of_smallest, 2, -1):       
+    for N in range(n_of_smallest, 1, -1):       
         dx = fib[N-1]*epsil_prime
         x1 = a + dx
         x2 = b - dx
