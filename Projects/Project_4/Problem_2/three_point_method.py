@@ -5,6 +5,10 @@ import os
 from prettytable import PrettyTable
 
 
+def latex_dump_row(params):
+    print(" " + " & ".join(params) + " \\\\ \n \\hline")
+
+
 def function(x):
     '''Defines the function to be evaluated for.'''
     return x**3 - x + 1
@@ -33,11 +37,13 @@ def three_point_search(itr, func, a, b, table, tol=1e-2, verbose=False):
     five_points.append(b)
     f_vals = [func(three_points[i]) for i in range(0, len(three_points))]
     index_of_min = f_vals.index(min(f_vals)) + 1
-    t.add_row([
+    params = [
         f"{itr}", f"{a:.3f}", f"{five_points[1]:.3f}", f"{five_points[2]:.3f}", f"{five_points[3]:.3f}", f"{b:.3f}", 
         f"{func(a):.3f}", f"{f_vals[0]:.3f}", f"{f_vals[1]:.3f}", f"{f_vals[2]:.3f}", f"{func(b):.3f}",
         f"{five_points[index_of_min]:.3f}", f"{f_vals[index_of_min - 1]:.3f}"
-        ])
+        ]
+    latex_dump_row(params)
+    t.add_row(params)
     if (b - a < tol):
         if verbose:
             file_location = os.path.dirname(os.path.normpath(__file__)) + "\\output\\"
@@ -54,6 +60,8 @@ def three_point_search(itr, func, a, b, table, tol=1e-2, verbose=False):
 if __name__ == "__main__":
     t = PrettyTable()
     t.title = f"Minima of x**3 - x + 1 on the Interval [0, 1.28]"
-    t.field_names = ['Iteration', 'a', 'x1', 'x2', 'x3', 'b', 'f(a)', 'f(x1)', 'f(x2)', 'f(x3)', 'f(b)', 'Min Point', 'Min Value']
+    fields = ['Iteration', 'a', 'x1', 'x2', 'x3', 'b', 'f(a)', 'f(x1)', 'f(x2)', 'f(x3)', 'f(b)', 'Min Point', 'Min Value']
+    t.field_names = fields
+    latex_dump_row(fields)
     three_point_search(0, function, 0, 1.28, t, verbose=True)
 
