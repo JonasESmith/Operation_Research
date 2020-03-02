@@ -40,8 +40,10 @@ def three_point_search(itr, func, a, b, table, tol=1e-2, verbose=False):
         ])
     if (b - a < tol):
         if verbose:
-            working_directory = os.path.dirname(os.path.normpath(__file__))
-            write_table(table, working_directory + "\\three_point_table.txt")
+            file_location = os.path.dirname(os.path.normpath(__file__)) + "\\output\\"
+            if not os.path.exists(file_location):
+                os.makedirs(file_location)
+            write_table(table, file_location + "three_point_table.txt")
         return five_points[index_of_min]
     else:
         a = five_points[index_of_min - 1]

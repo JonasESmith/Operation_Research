@@ -27,12 +27,15 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
             break
     epsil_prime = (b - a) / fib[N] 
     if verbose:
+        path = os.path.dirname(os.path.normpath(__file__)) + "\\output\\"
+        if not os.path.exists(path):
+            os.makedirs(path)
         itr = 0
         table = PrettyTable()
         table.title = f"Minima of x**3 - x + 1 on the Interval [0, 1.28]"
         table.field_names = ['Iteration', 'a', 'b', 'fib[N]', 'x1', 'x2', 'f(x1)', 'f(x2)', 'Mid-Point ((x1 + x2) / 2)', 'Midpoint Value']
-        working_directory = os.path.dirname(os.path.normpath(__file__))
-        with open(working_directory + "\\fibonacci_search_table.txt", 'w') as file:
+        
+        with open(path + "fibonacci_search_table.txt", 'w') as file:
             file.write(f"Smallest Fibonacci Number >= {smallest}: {fib[N]}\n")
             file.write(f"Tolerance/Epsilon: {epsilon}\n")
             file.write(f"(b - a) / Fib[N] = ({b} - {a}) / {fib[N]}\n")
@@ -57,7 +60,7 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
                 f"{mid_val:.3f}"
                 ])   
     if verbose:
-        with open(working_directory + "\\fibonacci_search_table.txt", 'a') as file:
+        with open(path + "fibonacci_search_table.txt", 'a') as file:
             file.write(str(table))
     return mid_point, mid_val
     
