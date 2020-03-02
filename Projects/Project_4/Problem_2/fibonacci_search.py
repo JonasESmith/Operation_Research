@@ -56,7 +56,7 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
             table.add_row([
                 f"{itr}", f"{a:.3f}", f"{b:.3f}", 
                 f"{fib[N]}", f"{x1:.3f}", f"{x2:.3f}", 
-                f"{fx1:.3f}", f"{fx2:.3f}", f"{mid_point:.3f}", 
+                f"{-fx1:.3f}", f"{-fx2:.3f}", f"{mid_point:.3f}", 
                 f"{mid_val:.3f}"
                 ])   
     if verbose:
