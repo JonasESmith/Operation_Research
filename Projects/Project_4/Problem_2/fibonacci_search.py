@@ -69,7 +69,7 @@ def fibonacci_search(a, b, func, epsilon=1e-2, verbose=False):
                 f"{-fx1:.3f}", f"{-fx2:.3f}", f"{mid_point:.3f}", 
                 f"{mid_val:.3f}"
                 ]         
-            latex_dump_row(params)
+            #latex_dump_row(params)
             table.add_row(params)   
 
     if verbose:
