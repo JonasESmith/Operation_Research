@@ -27,16 +27,15 @@ namespace Newton_Raphson
             for (int i = 0; i <= iterations; i++)
             {
                 //If the function value is large, assume it is diverging.
-                if (Math.Abs(f(initVector)) > 1000000)
+                if (Math.Abs(f(initVector)) > 2000000000000)
                 {
                     diverge = true;
                     break;
                 }
 
-                Console.Write("│ " + (i + "").PadRight(3) + " │ ");
-                Console.Write((round(initVector, 5) + "").PadRight(20) + " │ ");
-                Console.Write((Math.Round(f(initVector), 8) + "").PadRight(12) + " │ ");
-                Console.WriteLine((round(initVector, 5) + "").PadRight(23) + " │");
+                string print = string.Format("| {0, -3} | {1, 20} | {2,12} | {3,23} |", i, VectorString(initVector), Math.Round(f(initVector), 8), VectorString(round(initVector, 5)));
+
+                Console.WriteLine(print);
 
                 Matrix<double> A = hessian(initVector);
 
@@ -59,6 +58,24 @@ namespace Newton_Raphson
 
             Console.ReadLine();
 
+        }
+
+        static string VectorString(Vector<double> vector)
+        {
+            string returnValue = "< ";
+
+            for (int i = 0; i < vector.Count; i++)
+
+                if (i < vector.Count - 1)
+                {
+                    returnValue += string.Format("{0} ,", vector[i]);
+                }
+                else
+                {
+                    returnValue += string.Format("{0} >", vector[i]);
+                }
+
+            return returnValue;
         }
 
         //Function f(x,y,z)
@@ -112,7 +129,7 @@ namespace Newton_Raphson
         // multiplies the matrix A by the Vector v.
         static Vector<double> MatrixTimesVector(Matrix<double> A, Vector<double> v) => A * v;
 
-        // this is silly but I like the syntax of this better than math.pow
+        // this is silly but I like the syntax of this better than math.pow()
         static double sqr(double x) => Math.Pow(x, 2);
     }
 }
