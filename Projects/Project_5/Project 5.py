@@ -1,7 +1,8 @@
 import os
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 import numpy as np
+import pandas as pd
 from pulp import *
 
 # Two farmers:
@@ -14,9 +15,6 @@ from pulp import *
 #                 [2, 2, 2, 2, 3, 5, 6],
 #                 [1, 1, 1, 1, 1, 3, 6],
 #                 [0, 0, 0, 0, 0, 0, 4]])
-
-
-
 
 
 def dominance(game, rows, cols):
@@ -128,22 +126,44 @@ def optimizePlayer2(game):
     return [i.varValue for i in vars]
 
 
+def ask_for_file():
+    # Get the current working directory
+    cwd = os.path.dirname(os.path.normpath(__file__))
+    file = filedialog.askopenfilename(
+        initialdir=cwd,
+        filetypes=([("Excel Sheet", "*.xlsl")]),
+        title="Please Open Your Game's Excel Spreadsheet",
+    )
+
+    if os.path.isfile(file):
+        return file
+    else:
+        raise FileNotFoundError("The file specified does not exist! Exiting.")
+
+
 """ Insertion point for any python module ran as the target
  Keeps things in code blocks when the python script is no longer procedural
- and uses functions """
+ and uses functions and/or classes"""
 if __name__ == "__main__":
     # Two armys game define:
-    rows = np.array(["1 Only", "Half/Half", "2 Only"])
-    cols = np.array(["1 Only", "Half/Half", "2 Only"])
-    game = np.array([[5, 10, 20], [8, 2.8, 20], [8, 4, 2]])
+    try:
+        excel_file = ask_for_file()
+        rows = np.array(["1 Only", "Half/Half", "2 Only"])
+        cols = np.array(["1 Only", "Half/Half", "2 Only"])
+        game = np.array([[5, 10, 20], [8, 2.8, 20], [8, 4, 2]])
 
-    # Run dominance on the game until no changes occur.
-    newGame, rows, cols = dominance(game, rows, cols)
-    while not np.array_equal(game, newGame):
-        game = newGame
+        # Run dominance on the game until no changes occur.
         newGame, rows, cols = dominance(game, rows, cols)
+        while not np.array_equal(game, newGame):
+            game = newGame
+            newGame, rows, cols = dominance(game, rows, cols)
 
-    print(f"Simplified Game:")
-    print(game)
-    print(f"Player 1: {optimizePlayer1(game)}")
-    print(f"Player 2: {optimizePlayer2(game)}")
+        print(f"Simplified Game:")
+        print(game)
+        print(f"Player 1: {optimizePlayer1(game)}")
+        print(f"Player 2: {optimizePlayer2(game)}")
+    except FileNotFoundError as fnfe:
+        messagebox.showerror(
+            "Invalid File",
+            f"{fnfe}"
+        ) 
