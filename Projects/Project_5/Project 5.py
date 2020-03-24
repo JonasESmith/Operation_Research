@@ -131,7 +131,7 @@ def ask_for_file():
     cwd = os.path.dirname(os.path.normpath(__file__))
     file = filedialog.askopenfilename(
         initialdir=cwd,
-        filetypes=([("Excel Sheet", "*.xlsl")]),
+        filetypes=([("Excel Sheet", "*.xlsx")]),
         title="Please Open Your Game's Excel Spreadsheet",
     )
 
@@ -148,9 +148,13 @@ if __name__ == "__main__":
     # Two armys game define:
     try:
         excel_file = ask_for_file()
-        rows = np.array(["1 Only", "Half/Half", "2 Only"])
-        cols = np.array(["1 Only", "Half/Half", "2 Only"])
-        game = np.array([[5, 10, 20], [8, 2.8, 20], [8, 4, 2]])
+        game_info = pd.read_excel(excel_file)
+
+        # Game Definition Section
+        rows = np.array(game_info.columns)
+        cols = np.array(game_info.columns)
+        game = np.asarray(game_info)
+        # End Game Definition Section
 
         # Run dominance on the game until no changes occur.
         newGame, rows, cols = dominance(game, rows, cols)
@@ -163,7 +167,4 @@ if __name__ == "__main__":
         print(f"Player 1: {optimizePlayer1(game)}")
         print(f"Player 2: {optimizePlayer2(game)}")
     except FileNotFoundError as fnfe:
-        messagebox.showerror(
-            "Invalid File",
-            f"{fnfe}"
-        ) 
+        messagebox.showerror("Invalid File", fnfe)
