@@ -1,8 +1,10 @@
 import os
 from tkinter import filedialog, messagebox
 
+
 import numpy as np
 import pandas as pd
+from prettytable import PrettyTable
 from pulp import *
 
 # Two farmers:
@@ -151,8 +153,10 @@ if __name__ == "__main__":
         game_info = pd.read_excel(excel_file)
 
         # Game Definition Section
-        rows = np.array(game_info.columns)
-        cols = np.array(game_info.columns)
+        cols = game_info.iloc[:, 0].head().tolist()
+        game_info.drop(game_info.columns[0], axis=1, inplace=True)
+        rows = game_info.columns.tolist()
+
         game = np.asarray(game_info)
         # End Game Definition Section
 
@@ -162,9 +166,14 @@ if __name__ == "__main__":
             game = newGame
             newGame, rows, cols = dominance(game, rows, cols)
 
-        print(f"Simplified Game:")
-        print(game)
-        print(f"Player 1: {optimizePlayer1(game)}")
-        print(f"Player 2: {optimizePlayer2(game)}")
+        cols.insert(0, " ")
+        table = PrettyTable(cols)
+        game_list = game.tolist()
+        for i in range(0, len(rows)):
+            game_list[i].insert(0, rows[i])
+            table.add_row(game_list[i])
+        print(table)
+        print(optimizePlayer1(game))
+        print(optimizePlayer2(game))
     except FileNotFoundError as fnfe:
         messagebox.showerror("Invalid File", fnfe)
