@@ -131,6 +131,7 @@ def optimizePlayer2(game):
 def ask_for_file():
     # Get the current working directory
     cwd = os.path.dirname(os.path.normpath(__file__))
+    # Ask for file with current working directory as starting point
     file = filedialog.askopenfilename(
         initialdir=cwd,
         filetypes=([("Excel Sheet", "*.xlsx")]),
@@ -149,6 +150,7 @@ def ask_for_file():
 if __name__ == "__main__":
     # Two armys game define:
     try:
+        # Read information from user defined excel sheet
         excel_file = ask_for_file()
         game_info = pd.read_excel(excel_file)
 
@@ -156,8 +158,8 @@ if __name__ == "__main__":
         cols = game_info.iloc[:, 0].head().tolist()
         game_info.drop(game_info.columns[0], axis=1, inplace=True)
         rows = game_info.columns.tolist()
-
         game = np.asarray(game_info)
+
         # End Game Definition Section
 
         # Run dominance on the game until no changes occur.
@@ -166,15 +168,37 @@ if __name__ == "__main__":
             game = newGame
             newGame, rows, cols = dominance(game, rows, cols)
 
-        cols.insert(0, " ")
-        table = PrettyTable(cols)
-        table.title = "Initial Game"
+        # Format columns for table output
+        initial_cols = cols.copy()
+        initial_cols.insert(0, " ")
+        table = PrettyTable(initial_cols)
+        table.title = "Simplified Game"
         game_list = game.tolist()
+
+        # Insert the appropriate row header for each row
         for i in range(0, len(rows)):
             game_list[i].insert(0, rows[i])
             table.add_row(game_list[i])
         print(table)
-        print(optimizePlayer1(game))
-        print(optimizePlayer2(game))
+
+        p1 = PrettyTable(cols)
+        p1.title = "Player 1 Choices"
+        choices = optimizePlayer1(game)
+
+        for i in range(0, len(choices)):
+            choices[i] = f"{choices[i]:.2%}"
+
+        p1.add_row(choices)
+        p2 = PrettyTable(rows)
+        p2.title = "Player 2 Choices"
+        choices = optimizePlayer2(game)
+
+        for i in range(0, len(choices)):
+            choices[i] = f"{choices[i]:.2%}"
+
+        p2.add_row(choices)
+        print(p1)
+        print(p2)
+        # input("Press any key to continue...")
     except FileNotFoundError as fnfe:
         messagebox.showerror("Invalid File", fnfe)
