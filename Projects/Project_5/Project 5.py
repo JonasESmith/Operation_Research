@@ -8,9 +8,10 @@ from pulp import *
 
 
 cwd = os.getcwd()
-solverdir = 'cbc-2.7.5-win64\\bin\\cbc.exe'
+solverdir = "cbc-2.7.5-win64\\bin\\cbc.exe"
 solverdir = os.path.join(cwd, solverdir)
-solver = pulp.COIN_CMD(path=solverdir)
+solver = COIN_CMD(path=solverdir)
+
 
 def dominance(game, rows, cols):
     # Loop through each row, looking for another row that is always worse.
@@ -54,7 +55,7 @@ def dominance(game, rows, cols):
 
 
 def optimizePlayer1(game):
-     # Define the problem
+    # Define the problem
     prob = LpProblem("Problem", LpMaximize)
 
     # Create the variables for each option.
@@ -77,12 +78,11 @@ def optimizePlayer1(game):
 
     # Add the constraint that all probabilities must add to 1.
     prob += lpSum([vars[i] for i in range(0, game.shape[0])]) == 1
-    
+
     prob.solve(solver)
 
     if LpStatus[prob.status] != "Optimal":
-        print("Error: Optimization not optimal!")
-        return [0 for i in vars]
+        raise ValueError("Player 1 solution returned a non-optimal status")
 
     return [i.varValue for i in vars]
 
@@ -115,22 +115,22 @@ def optimizePlayer2(game):
     prob.solve(solver)
 
     if LpStatus[prob.status] != "Optimal":
-        print("Error: Optimization not optimal!")
-        return [0 for i in vars]
+        raise ValueError("Player 2 solution returned a non-optimal status")
 
     return [i.varValue for i in vars]
 
 
 def ask_for_file():
     # Get the current working directory
-    cwd = os.path.dirname(os.path.normpath(__file__))
+    # No longer works correctly if not a script
+    # cwd = os.path.dirname(os.path.normpath(__file__))
+    cwd_exe = os.getcwd()
     # Ask for file with current working directory as starting point
     file = filedialog.askopenfilename(
-        initialdir=cwd,
+        initialdir=cwd_exe,
         filetypes=([("Excel Sheet", "*.xlsx")]),
         title="Please Open Your Game's Excel Spreadsheet",
     )
-
 
     if os.path.isfile(file):
         return file
@@ -146,16 +146,18 @@ if __name__ == "__main__":
     try:
         root = Tk()
         root.withdraw()
-
+        if not os.path.exists(solverdir):
+            raise Exception(
+                "The solver could not be located! Please keep the exe in the same folder as the CBC folder!"
+            )
         # Read information from user defined excel sheet
         excel_file = ask_for_file()
         game_info = pd.read_excel(excel_file)
 
         # Game Definition Section
         rows = np.array(game_info.iloc[:, 0])
-        game_info.drop(game_info.columns[0], axis=1, inplace=True)     
+        game_info.drop(game_info.columns[0], axis=1, inplace=True)
         cols = np.array(game_info.columns)
-
         game = np.asarray(game_info)
         # End Game Definition Section
 
@@ -187,10 +189,8 @@ if __name__ == "__main__":
         p1.title = "Player 1"
         choices = optimizePlayer1(game)
 
-
         for i in range(0, len(choices)):
             choices[i] = f"{choices[i]:.2%}"
-                    
 
         p1.add_row(choices)
         p2 = PrettyTable(cols)
@@ -207,3 +207,10 @@ if __name__ == "__main__":
         input("Press enter to continue...")
     except FileNotFoundError as fnfe:
         messagebox.showerror("Invalid File", fnfe)
+    except ValueError as ve:
+        messagebox.showerror("Could Not Optimize", ve)
+        # To show the table that was already printed
+        input("Press enter to continue...")
+    except Exception as e:
+        # Catch unexpected errors in a messagebox instead of to the console
+        messagebox.showerror("Solution Failed", e)      
