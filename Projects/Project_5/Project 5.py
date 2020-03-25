@@ -168,6 +168,7 @@ if __name__ == "__main__":
 
         cols.insert(0, " ")
         table = PrettyTable(cols)
+        table.title = "Initial Game"
         game_list = game.tolist()
         for i in range(0, len(rows)):
             game_list[i].insert(0, rows[i])
