@@ -155,11 +155,11 @@ if __name__ == "__main__":
         game_info = pd.read_excel(excel_file)
 
         # Game Definition Section
-        cols = game_info.iloc[:, 0].head().tolist()
+        cols = np.array(game_info.iloc[:, 0].tolist())
         game_info.drop(game_info.columns[0], axis=1, inplace=True)
-        rows = game_info.columns.tolist()
+        rows = np.array(game_info.columns.tolist())
         game = np.asarray(game_info)
-
+        initialGame = game
         # End Game Definition Section
 
         # Run dominance on the game until no changes occur.
@@ -169,10 +169,12 @@ if __name__ == "__main__":
             newGame, rows, cols = dominance(game, rows, cols)
 
         # Format columns for table output
+        cols = cols.tolist()
+        rows = rows.tolist()
         initial_cols = cols.copy()
         initial_cols.insert(0, " ")
         table = PrettyTable(initial_cols)
-        table.title = "Simplified Game"
+        table.title = "Matrix"
         game_list = game.tolist()
 
         # Insert the appropriate row header for each row
@@ -182,7 +184,7 @@ if __name__ == "__main__":
         print(table)
 
         p1 = PrettyTable(cols)
-        p1.title = "Player 1 Choices"
+        p1.title = "Player 1"
         choices = optimizePlayer1(game)
 
         for i in range(0, len(choices)):
@@ -190,7 +192,7 @@ if __name__ == "__main__":
 
         p1.add_row(choices)
         p2 = PrettyTable(rows)
-        p2.title = "Player 2 Choices"
+        p2.title = "Player 2"
         choices = optimizePlayer2(game)
 
         for i in range(0, len(choices)):
