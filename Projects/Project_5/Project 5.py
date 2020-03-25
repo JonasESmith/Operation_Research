@@ -1,11 +1,12 @@
 import os
-from tkinter import filedialog, messagebox
-
+import traceback
+from tkinter import Tk, filedialog, messagebox
 
 import numpy as np
 import pandas as pd
 from prettytable import PrettyTable
-from pulp import *
+from pulp import (LpContinuous, LpMaximize, LpProblem, LpStatus, LpVariable,
+                  lpSum, LpSolver, solvers)
 
 # Two farmers:
 # rows = np.array([0, 1, 2, 3, 4, 5, 6])
@@ -63,7 +64,6 @@ def dominance(game, rows, cols):
 def optimizePlayer1(game):
     # Define the problem
     prob = LpProblem("Problem", LpMaximize)
-
     # Create the variables for each option.
     vars = []
     for i in range(0, game.shape[0]):
@@ -85,7 +85,7 @@ def optimizePlayer1(game):
     # Add the constraint that all probabilities must add to 1.
     prob += lpSum([vars[i] for i in range(0, game.shape[0])]) == 1
 
-    prob.solve()
+    prob.solve(solvers.CPLEX_DLL())
 
     if LpStatus[prob.status] != "Optimal":
         print("Error: Optimization not optimal!")
@@ -119,7 +119,7 @@ def optimizePlayer2(game):
     # Add the constraint that all probabilities must add to 1.
     prob += lpSum([vars[i] for i in range(0, game.shape[1])]) == 1
 
-    prob.solve()
+    prob.solve(solvers.COINMP_DLL)
 
     if LpStatus[prob.status] != "Optimal":
         print("Error: Optimization not optimal!")
@@ -150,6 +150,8 @@ def ask_for_file():
 if __name__ == "__main__":
     # Two armys game define:
     try:
+        root = Tk()
+        root.iconify()
         # Read information from user defined excel sheet
         excel_file = ask_for_file()
         game_info = pd.read_excel(excel_file)
@@ -204,3 +206,6 @@ if __name__ == "__main__":
         # input("Press any key to continue...")
     except FileNotFoundError as fnfe:
         messagebox.showerror("Invalid File", fnfe)
+    # Extra exception catching to give information after conversion to exe
+    except Exception as e:
+        messagebox.showerror("Unknown Error", traceback.print_exc())
