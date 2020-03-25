@@ -6,6 +6,7 @@ import pandas as pd
 from prettytable import PrettyTable
 from pulp import *
 
+
 def dominance(game, rows, cols):
     # Loop through each row, looking for another row that is always worse.
     remRows = []
@@ -48,7 +49,7 @@ def dominance(game, rows, cols):
 
 
 def optimizePlayer1(game):
-    # Define the problem
+     # Define the problem
     prob = LpProblem("Problem", LpMaximize)
 
     # Create the variables for each option.
@@ -147,11 +148,7 @@ if __name__ == "__main__":
         game_info.drop(game_info.columns[0], axis=1, inplace=True)     
         cols = np.array(game_info.columns)
 
-        print(rows)
-        print(cols)
-
         game = np.asarray(game_info)
-        initialGame = game
         # End Game Definition Section
 
         # Run dominance on the game until no changes occur.
