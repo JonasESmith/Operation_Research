@@ -143,9 +143,14 @@ if __name__ == "__main__":
         game_info = pd.read_excel(excel_file)
 
         # Game Definition Section
-        game_info.drop(game_info.columns[0], axis=1, inplace=True)
         rows = np.array(game_info.iloc[:, 0].tolist())
+
+        # removes empty cell 
+        game_info.drop(game_info.columns[0], axis=1, inplace=True)
         cols = np.array(game_info.columns.tolist())
+
+        print(rows)
+        print(cols)
 
         game = np.asarray(game_info)
         initialGame = game
@@ -160,6 +165,7 @@ if __name__ == "__main__":
         # Format columns for table output
         cols = cols.tolist()
         rows = rows.tolist()
+
         initial_cols = cols.copy()
         initial_cols.insert(0, " ")
         table = PrettyTable(initial_cols)
