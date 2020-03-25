@@ -6,18 +6,6 @@ import pandas as pd
 from prettytable import PrettyTable
 from pulp import *
 
-# Two farmers:
-# rows = np.array([0, 1, 2, 3, 4, 5, 6])
-# cols = np.array([0, 1, 2, 3, 4, 5, 6])
-# game = np.array([[3, 1, 2, 3, 4, 5, 6],
-#                 [5, 3, 2, 3, 4, 5, 6],
-#                 [4, 4, 3, 3, 4, 5, 6],
-#                 [3, 3, 3, 3, 4, 5, 6],
-#                 [2, 2, 2, 2, 3, 5, 6],
-#                 [1, 1, 1, 1, 1, 3, 6],
-#                 [0, 0, 0, 0, 0, 0, 4]])
-
-
 def dominance(game, rows, cols):
     # Loop through each row, looking for another row that is always worse.
     remRows = []
