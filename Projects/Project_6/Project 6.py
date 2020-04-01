@@ -1,12 +1,16 @@
 
 import os
 import numpy as np
+import pandas as pd
+from tkinter import filedialog, messagebox, Tk
 from prettytable import PrettyTable
 
 #Array of paths.
 #The main diagonal is ignored.
 #All valid paths should be non-negative numbers.
 #Any path that does not exist should be indiated by a negative number (-1).
+
+
 paths = np.array([[ 0, 12, -1, 16, -1, 11, -1, -1, -1, -1],
                   [12,  0,  8,  6, -1, -1, -1, 25, -1, -1],
                   [-1,  8,  0,  4, 14, -1, -1, -1, -1, -1],
@@ -112,92 +116,137 @@ def printNodes():
     print()
 
 
-#Make sure the path matrix is square.
-if paths.shape[0] != paths.shape[1]:
-    print("The path matrix must be square!")
-    exit
+def ask_for_file():
+    # Get the current working directory
+    # No longer works correctly if not a script
+    # cwd = os.path.dirname(os.path.normpath(__file__))
+    # Ask for file with current working directory as starting point
+    file = filedialog.askopenfilename(
+        initialdir=os.getcwd(),
+        filetypes=([("Excel Sheet", "*.xlsx"), ("Comma Separated Values", "*.csv")]),
+        title="Please Open Your Game's Excel Spreadsheet",
+    )
 
-#Get the number of nodes
-size = paths.shape[0]
-
-#Ask the user to input these values. Will need to lookup in nodeNames.
-source = 0
-sink = 7
-debugMode = True
-
-#List to keep track of info about each node.
-nodes = [Node(i) for i in range(0, size)]
-nodes[source].starred = True
-nodes[source].lengthFrom = 0
-
-for row in range(0, size):
-    for col in range(0, size):
-        #Add a new path if row is not equal to the column, the value in the matrix is non-zero, the path is not returning to the source, and the row is not the sink.
-        if row != col and paths[row][col] >= 0 and col != source and row != sink:
-            nodes[row].paths.append(Path(row, col, paths[row][col]))
-
-#Sort the paths within each node by length.
-for node in nodes:
-    node.paths.sort(key=lambda path: path.length)
+    if os.path.isfile(file):
+        return file
+    else:
+        raise FileNotFoundError("The file specified does not exist! Exiting.")
 
 
-printNodes()
+if __name__ == "__main__":
+    try:
+        root = Tk()
+        root.withdraw()
+        
+        # Read in data frame from a selected file
+        df = pd.read_excel(ask_for_file(), verbose=True)
+        # Little bit of regex magic to find all empty cells and set them to 0.
+        df.replace(r'^\s*$', 0, regex=True)
+        # Store column headers to ask the user for source and sink
+        nodeNames = df.columns.tolist()[1:]
+        # Drop column headers
+        df.drop(df.columns[0], axis=1, inplace=True)
+        # Drop row headers
+        df.drop(0, inplace=True)      
+        # Convert data frame to useable numpy array
+        paths = np.asarray(df)
 
-#Main program loop. Iterate until we reach the sink.
-while True:
-    #If debug mode is on, pause until the user moves to the next step.
-    if debugMode:
-        input("Press enter to run the next iteration")
-        print()
-        print()
+        for i in range(0, len(nodeNames)):
+            print(f"{i}: {nodeNames[i]}")
+        
+        source = int(input("\nFrom the list above, please set the source by its number: "))
+        sink = int(input("\nFrom the list above, please set the sink by its number:" ))
+        #Make sure the path matrix is square.
+        # if paths.shape[0] != paths.shape[1]:
+        #     raise ValueError("The path matrix must be square!")
+        
 
-    #Look for the shortest total length after travelling a path from all starred nodes.
-    #Note: The shortest path from a node will always be first in the list of remaining nodes since the lists are sorted and we are removing them as we go.
-    shortestPath = None
-    shortestLength = -1
-    for node in nodes:
-        remainingPaths = node.remainingPaths()
-        #Check if the node is starred and has at least one path remaining.
-        if node.starred and len(remainingPaths) > 0:
-            #Check if the total length so far plus the length of the next path is less than our current minimum.
-            #If the shorestLength is -1 we havn't found any node yet, so it will become our current min.
-            if node.lengthFrom + remainingPaths[0].length < shortestLength or shortestLength == -1:
-                #Update the shorest path and shorest length.
-                shortestPath = remainingPaths[0]
-                shortestLength = node.lengthFrom + remainingPaths[0].length
-    
-    #Determine the new node based on where the shorest path ends.
-    newNode = nodes[shortestPath.end]
-    #Circle the new path
-    shortestPath.circled = True
-    #Star the new node, update where it came from, and what the total length to the node is.
-    newNode.starred = True
-    newNode.nodeFrom = shortestPath.start
-    newNode.lengthFrom = shortestLength
+        #Get the number of nodes
+        size = paths.shape[0]
 
-    #Remove all paths ending at the new node, except for the circled path.
-    for node in nodes:
-        for path in node.paths:
-            if path.end == newNode.index and path != shortestPath:
-                del node.paths[node.paths.index(path)]
+        #Ask the user to input these values. Will need to lookup in nodeNames.
+        # source = 0
+        # sink = 7
+        debugMode = False
+
+        #List to keep track of info about each node.
+        nodes = [Node(i) for i in range(0, size)]
+        nodes[source].starred = True
+        nodes[source].lengthFrom = 0
+
+        for row in range(0, size):
+            for col in range(0, size):
+                #Add a new path if row is not equal to the column, the value in the matrix is non-zero, the path is not returning to the source, and the row is not the sink.
+                if row != col and paths[row][col] >= 0 and col != source and row != sink:
+                    nodes[row].paths.append(Path(row, col, paths[row][col]))
+
+        #Sort the paths within each node by length.
+        for node in nodes:
+            node.paths.sort(key=lambda path: path.length)
+
+
+        printNodes()
+
+        #Main program loop. Iterate until we reach the sink.
+        while True:
+            #If debug mode is on, pause until the user moves to the next step.
+            if debugMode:
+                input("Press enter to run the next iteration")
+                print()
+                print()
+
+            #Look for the shortest total length after travelling a path from all starred nodes.
+            #Note: The shortest path from a node will always be first in the list of remaining nodes since the lists are sorted and we are removing them as we go.
+            shortestPath = None
+            shortestLength = -1
+            for node in nodes:
+                remainingPaths = node.remainingPaths()
+                #Check if the node is starred and has at least one path remaining.
+                if node.starred and len(remainingPaths) > 0:
+                    #Check if the total length so far plus the length of the next path is less than our current minimum.
+                    #If the shorestLength is -1 we havn't found any node yet, so it will become our current min.
+                    if node.lengthFrom + remainingPaths[0].length < shortestLength or shortestLength == -1:
+                        #Update the shorest path and shorest length.
+                        shortestPath = remainingPaths[0]
+                        shortestLength = node.lengthFrom + remainingPaths[0].length
+            
+            #Determine the new node based on where the shorest path ends.
+            newNode = nodes[shortestPath.end]
+            #Circle the new path
+            shortestPath.circled = True
+            #Star the new node, update where it came from, and what the total length to the node is.
+            newNode.starred = True
+            newNode.nodeFrom = shortestPath.start
+            newNode.lengthFrom = shortestLength
+
+            #Remove all paths ending at the new node, except for the circled path.
+            for node in nodes:
+                for path in node.paths:
+                    if path.end == newNode.index and path != shortestPath:
+                        del node.paths[node.paths.index(path)]
+                        break
+            
+            #Print the current state of the nodes.
+            # printNodes()
+
+            #If the sink node has been starred, break from the loop.
+            if nodes[sink].starred:
                 break
-    
-    #Print the current state of the nodes.
-    printNodes()
 
-    #If the sink node has been starred, break from the loop.
-    if nodes[sink].starred:
-        break
+        #Start at the sink and work backward to find the best path.
+        outPath = nodeNames[sink]
+        curNode = sink
+        while True:
+            outPath = nodeNames[nodes[curNode].nodeFrom] + " -> " + outPath
+            curNode = nodes[curNode].nodeFrom
+            if curNode == source:
+                break
 
-#Start at the sink and work backward to find the best path.
-outPath = nodeNames[sink]
-curNode = sink
-while True:
-    outPath = nodeNames[nodes[curNode].nodeFrom] + " -> " + outPath
-    curNode = nodes[curNode].nodeFrom
-    if curNode == source:
-        break
-
-#Print the final output
-print("Path: " + outPath)
-print(f"Total Length: {nodes[sink].lengthFrom}")
+        #Print the final output
+        print("Path: " + outPath)
+        print(f"Total Length: {nodes[sink].lengthFrom}")
+    except FileNotFoundError as fnfe:
+        messagebox.showerror("File Not Found", fnfe)
+    except ValueError as ve:
+        messagebox.showerror("Invalid Input", ve)
+        
