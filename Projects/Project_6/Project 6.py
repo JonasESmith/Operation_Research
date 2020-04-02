@@ -138,27 +138,25 @@ if __name__ == "__main__":
         root = Tk()
         root.withdraw()
         
-        # Read in data frame from a selected file
+        # Read in data frame from a selected file.
         df = pd.read_excel(ask_for_file(), verbose=True)
         # Little bit of regex magic to find all empty cells and set them to 0.
         df.replace(r'^\s*$', 0, regex=True)
-        # Store column headers to ask the user for source and sink
+        # Store column headers to ask the user for source and sink.
         nodeNames = df.columns.tolist()[1:]
-        # Drop column headers
-        df.drop(df.columns[0], axis=1, inplace=True)
-        # Drop row headers
-        df.drop(0, inplace=True)      
-        # Convert data frame to useable numpy array
+        # Drop column headers.
+        df.drop(df.columns[0], axis=1, inplace=True)   
+        # Convert data frame to useable numpy array.
         paths = np.asarray(df)
-
+        # List data file with indices for user choices.
         for i in range(0, len(nodeNames)):
-            print(f"{i}: {nodeNames[i]}")
-        
+            print(f"{i}: {nodeNames[i]}")    
+        # Prompt user for source and sink indices from list.
         source = int(input("\nFrom the list above, please set the source by its number: "))
         sink = int(input("\nFrom the list above, please set the sink by its number:" ))
-        #Make sure the path matrix is square.
-        # if paths.shape[0] != paths.shape[1]:
-        #     raise ValueError("The path matrix must be square!")
+        # Make sure the path matrix is square.
+        if paths.shape[0] != paths.shape[1]:
+            raise ValueError("The path matrix must be square!")
         
 
         #Get the number of nodes
@@ -191,10 +189,10 @@ if __name__ == "__main__":
         while True:
             #If debug mode is on, pause until the user moves to the next step.
             if debugMode:
+                printNodes()
                 input("Press enter to run the next iteration")
                 print()
                 print()
-
             #Look for the shortest total length after travelling a path from all starred nodes.
             #Note: The shortest path from a node will always be first in the list of remaining nodes since the lists are sorted and we are removing them as we go.
             shortestPath = None
@@ -227,7 +225,7 @@ if __name__ == "__main__":
                         break
             
             #Print the current state of the nodes.
-            # printNodes()
+            # 
 
             #If the sink node has been starred, break from the loop.
             if nodes[sink].starred:
