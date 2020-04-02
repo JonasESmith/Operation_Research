@@ -10,30 +10,6 @@ from prettytable import PrettyTable
 #All valid paths should be non-negative numbers.
 #Any path that does not exist should be indiated by a negative number (-1).
 
-
-paths = np.array([[ 0, 12, -1, 16, -1, 11, -1, -1, -1, -1],
-                  [12,  0,  8,  6, -1, -1, -1, 25, -1, -1],
-                  [-1,  8,  0,  4, 14, -1, -1, -1, -1, -1],
-                  [16,  6,  4,  0, -1, 15,  7, -1, 20, -1],
-                  [-1, -1, 14, -1,  0, -1, 17, 10, -1, -1],
-                  [11, -1, -1, 15, -1,  0, -1, -1,  3, -1],
-                  [-1, -1, -1,  7, 17, -1,  0, -1, -1,  5],
-                  [-1, 25, -1, -1, 10, -1, -1,  0, 18, 13],
-                  [-1, -1, -1, 20, -1,  3, -1, 18,  0,  9],
-                  [-1, -1, -1, -1, -1, -1,  5, 13,  9,  0]])
-
-#paths = np.array([[ 0, 54, 29, 78, -1, -1, -1, -1, -1],
-#                  [54,  0, -1, 36, -1, -1, 53, -1, -1],
-#                  [29, -1,  0, 55, -1, 64, -1, -1, -1],
-#                  [78, 36, 55,  0, 23, -1, -1, -1, 50],
-#                  [-1, -1, -1, 23,  0, 44, -1, -1, 51],
-#                  [-1, -1, 64, -1, 44,  0, -1, -1, 75],
-#                  [-1, 53, -1, -1, -1, -1,  0, 40, 57],
-#                  [-1, -1, -1, -1, -1, -1, 40,  0, 24],
-#                  [-1, -1, -1, 50, 51, 75, 57, 24,  0]])
-#The name of each node. This is only used for display purposes. The index of the node is used for all other purposes.
-nodeNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-
 #Class to store inforation about each node.
 class Node:
     index = 0
@@ -87,33 +63,31 @@ def printNodes():
     for node in nodes:
         if len(node.paths) > maxPaths:
             maxPaths = len(node.paths)
-    
-    cols = ["Node", "Starred", "Total Cost"]
-    for i in range(0, maxPaths):
-        cols.append(f"Branch {i}")
-    table = PrettyTable(cols)
-    table.title = "Current State"
 
+
+    output = []
+    
+    output.append(["Node", "Starred", "Total Cost"])
+    for i in range(0, maxPaths):
+        output[0].append(f"Branch {i}")
+        output[0].append(f"Cost")
     for node in nodes:
         if node.index == sink:
             continue
         row = []
-        row.append(f"{nodeNames[node.index]}") #Node name
-        row.append("*" if node.starred else "") #Star
-        row.append(f"{node.lengthFrom}" if node.lengthFrom >= 0 else "") #Total cost
-        for i in range(0, maxPaths):
-            if i < len(node.paths):
-                if node.paths[i].circled:
-                    row.append("(" + nodeNames[node.index] + nodeNames[node.paths[i].end] + f"  {node.paths[i].length})")
-                else:
-                    row.append(nodeNames[node.index] + nodeNames[node.paths[i].end] + f"  {node.paths[i].length}")
+        row.append(nodeNames[node.index])
+        row.append("*" if node.starred else "")
+        row.append(node.lengthFrom if node.lengthFrom > 0 else "")
+        for path in node.paths:
+            if path.circled:
+                row.append("(" + nodeNames[path.end] + ")")
             else:
-                row.append("")
-        table.add_row(row)
+                row.append(nodeNames[path.end])
+            row.append(path.length)
+        output.append(row)
 
-
-    print(table)
-    print()
+    dataframes.append(pd.DataFrame(output))
+    
 
 
 def ask_for_file():
@@ -153,7 +127,11 @@ if __name__ == "__main__":
             print(f"{i}: {nodeNames[i]}")    
         # Prompt user for source and sink indices from list.
         source = int(input("\nFrom the list above, please set the source by its number: "))
-        sink = int(input("\nFrom the list above, please set the sink by its number:" ))
+        sink = int(input("\nFrom the list above, please set the sink by its number: " ))
+        
+        print()
+        print()
+
         # Make sure the path matrix is square.
         if paths.shape[0] != paths.shape[1]:
             raise ValueError("The path matrix must be square!")
@@ -161,11 +139,6 @@ if __name__ == "__main__":
 
         #Get the number of nodes
         size = paths.shape[0]
-
-        #Ask the user to input these values. Will need to lookup in nodeNames.
-        # source = 0
-        # sink = 7
-        debugMode = False
 
         #List to keep track of info about each node.
         nodes = [Node(i) for i in range(0, size)]
@@ -182,17 +155,11 @@ if __name__ == "__main__":
         for node in nodes:
             node.paths.sort(key=lambda path: path.length)
 
-
-        printNodes()
+        dataframes = []
 
         #Main program loop. Iterate until we reach the sink.
         while True:
-            #If debug mode is on, pause until the user moves to the next step.
-            if debugMode:
-                printNodes()
-                input("Press enter to run the next iteration")
-                print()
-                print()
+            printNodes()
             #Look for the shortest total length after travelling a path from all starred nodes.
             #Note: The shortest path from a node will always be first in the list of remaining nodes since the lists are sorted and we are removing them as we go.
             shortestPath = None
@@ -224,8 +191,6 @@ if __name__ == "__main__":
                         del node.paths[node.paths.index(path)]
                         break
             
-            #Print the current state of the nodes.
-            # 
 
             #If the sink node has been starred, break from the loop.
             if nodes[sink].starred:
@@ -243,6 +208,16 @@ if __name__ == "__main__":
         #Print the final output
         print("Path: " + outPath)
         print(f"Total Length: {nodes[sink].lengthFrom}")
+
+        print()
+        print("Done.")
+        print(f"Exporting {len(dataframes)} iterations to output file.")
+        with pd.ExcelWriter('output.xlsx') as writer:
+            for i in range(0, len(dataframes)):
+                print(f"Exporting iteration {i}")
+                dataframes[i].to_excel(writer, sheet_name=f'Iteration {i}', index_label=False, index=False, header=False)
+            writer.save()
+        print("Done.")
     except FileNotFoundError as fnfe:
         messagebox.showerror("File Not Found", fnfe)
     except ValueError as ve:
