@@ -243,7 +243,7 @@ if __name__ == "__main__":
             os.remove("final_results.txt")
             for i in range(0, len(dataframes)):
                 print(f'Exporting "Iteration {i}.csv"')
-                dataframes[i].to_csv(f"Iteration_{i}.csv")
+                dataframes[i].to_csv(f"Iteration_{i}.csv", index=False, header=False)
                 zipfile.write(f"Iteration_{i}.csv", f"Iteration_{i}.csv")
                 # Since the zipefile class copies a file and does not move
                 # we must tell the os to remove the file manually each iteration.
