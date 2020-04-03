@@ -237,13 +237,15 @@ if __name__ == "__main__":
         zip_name = f"{to_filename(nodeNames[source])}_to_{to_filename(nodeNames[sink])}.zip"
 
         with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zipfile:
-            with open("final_results.txt", 'w') as file:
+            with open("final_results.txt", "w") as file:
                 file.write(output)
             zipfile.write("final_results.txt", "final_results.txt")
             os.remove("final_results.txt")
             for i in range(0, len(dataframes)):
                 print(f'Exporting "Iteration {i}.csv"')
-                dataframes[i].to_csv(f"Iteration_{i}.csv", index=False, header=False)
+                dataframes[i].to_csv(
+                    f"Iteration_{i}.csv", index=False, header=False
+                )
                 zipfile.write(f"Iteration_{i}.csv", f"Iteration_{i}.csv")
                 # Since the zipefile class copies a file and does not move
                 # we must tell the os to remove the file manually each iteration.
