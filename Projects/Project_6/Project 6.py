@@ -253,6 +253,7 @@ if __name__ == "__main__":
 
         print("Done.")
         print(f"Files exported to '{zip_name}'")
+        input("Press enter to continue...")
     except FileNotFoundError as fnfe:
         messagebox.showerror("File Not Found", fnfe)
     except ValueError as ve:
