@@ -81,10 +81,7 @@ def optimal_choice(m_rows, d_rows, names, values, weights, inclusive_value_limit
     for i in range(0, len(m_rows)):
         weight = d_rows[i][inclusive_value_limit]
         inclusive_value_limit -= weight
-        if i == 0:
-            items_count.append(weight // weights[i])
-        else:
-            items_count.append(weight // weights[i])
+        items_count.append(weight // weights[i])
 
     print(f"The optimal Value is: {optimal_value}")
     print(f"The item choices are as follows: ")
