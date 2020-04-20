@@ -17,6 +17,7 @@ namespace OptGui
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<Services.IProblemType1918, Services.KnapsackSolver>();
+            containerRegistry.Register<Services.IKnapsackRow, Services.KnapsackRow>();
         }
 
         protected override Window CreateShell()

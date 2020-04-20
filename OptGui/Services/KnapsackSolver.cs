@@ -1,65 +1,120 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OptGui.Services
+﻿namespace OptGui.Services
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+
+    /// <summary>
+    /// Defines the <see cref="IProblemType1918" />.
+    /// </summary>
     public interface IProblemType1918
     {
-        List<string> Names { get; set; }
+        /// <summary>
+        /// Gets or sets the Rows.
+        /// </summary>
+        ObservableCollection<KnapsackRow> Rows { get; set; }
 
-        List<double> Weights { get; set; }
+        /// <summary>
+        /// Gets or sets the StageCount.
+        /// </summary>
+        int StageCount { set; get; }
 
-        List<double> Values { get; set; }
+        /// <summary>
+        /// Gets or sets the DecisionObservableCollections.
+        /// </summary>
+        ObservableCollection<ObservableCollection<double>> DecisionObservableCollections { get; set; }
 
-        int StageCount { get; }
+        /// <summary>
+        /// Gets or sets the RecursiveReturnsObservableCollections.
+        /// </summary>
+        ObservableCollection<ObservableCollection<double>> RecursiveReturnsObservableCollections { get; set; }
 
-        List<List<double>> DecisionLists { get; set; }
+        /// <summary>
+        /// Gets the StageTable.
+        /// </summary>
+        ObservableCollection<ObservableCollection<double>> StageTable { get; }
 
-        List<List<double>> RecursiveReturnsLists { get; set; }
-
-        List<List<double>> StageTable { get; }
-
+        /// <summary>
+        /// Gets the OptimalPolicy.
+        /// </summary>
         double OptimalPolicy { get; }
-
     }
+
+    /// <summary>
+    /// Defines the <see cref="KnapsackSolver" />.
+    /// </summary>
     public class KnapsackSolver : IProblemType1918
     {
-        private List<string> _names;
-        private List<double> _weights;
-        private List<double> _values;
+        /// <summary>
+        /// Gets or sets the Rows.
+        /// </summary>
+        public ObservableCollection<KnapsackRow> Rows { get; set; }
 
-        public List<string> Names { get => _names; set => _names = value; }
+        /// <summary>
+        /// Gets or sets the StageCount.
+        /// </summary>
+        public int StageCount { set; get; }
 
-        public List<double> Weights { get => _weights; set => _weights = value; }
+        /// <summary>
+        /// Gets or sets the DecisionObservableCollections.
+        /// </summary>
+        public ObservableCollection<ObservableCollection<double>> DecisionObservableCollections { get; set; }
 
-        public List<double> Values { get => _values; set => _values = value; }
+        /// <summary>
+        /// Gets or sets the RecursiveReturnsObservableCollections.
+        /// </summary>
+        public ObservableCollection<ObservableCollection<double>> RecursiveReturnsObservableCollections { get; set; }
 
-        public int StageCount => this.Values.Count;
-
-        public List<List<double>> DecisionLists { get; set; }
-
-        public List<List<double>> RecursiveReturnsLists { get; set; }
-
-        public List<List<double>> StageTable
+        /// <summary>
+        /// Gets the StageTable.
+        /// </summary>
+        public ObservableCollection<ObservableCollection<double>> StageTable
         {
             get
             {
-                List<List<double>> table = new List<List<double>>();
+                var table = new ObservableCollection<ObservableCollection<double>>();
 
-                for (int i = this.StageCount; i >= 0;  i--)
+                for (int i = this.StageCount; i >= 0; i--)
                 {
-                    table.Add(this.RecursiveReturnsLists[i]);
-                    table.Add(this.DecisionLists[i]);
+                    table.Add(this.RecursiveReturnsObservableCollections[i]);
+                    table.Add(this.DecisionObservableCollections[i]);
                 }
 
                 return table;
             }
         }
 
+        /// <summary>
+        /// Gets the OptimalPolicy.
+        /// </summary>
         public double OptimalPolicy { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KnapsackSolver"/> class.
+        /// </summary>
+        public KnapsackSolver()
+        {
+            this.Rows = new ObservableCollection<KnapsackRow>();
+        }
+
+        /// <summary>
+        /// Adds a  <see cref="KnapsackRow"/> to the ObservableCollection of data points.
+        /// </summary>
+        /// <param name="name">The name<see cref="string"/>.</param>
+        /// <param name="weight">The weight<see cref="double"/>.</param>
+        /// <param name="value">The value<see cref="double"/>.</param>
+        public void AddRow(string name, double weight, double value)
+        {
+            this.Rows.Add(new KnapsackRow(name, weight, value));
+        }
+
+        /// <summary>
+        /// Removes a <see cref="KnapsackRow"/> from the ObservableCollection of data points by a given index.
+        /// </summary>
+        /// <param name="index">The index<see cref="int"/>.</param>
+        public void RemoveRow(int index)
+        {
+            this.Rows.RemoveAt(index);
+        }
     }
 }
