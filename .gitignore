@@ -8,3 +8,6 @@ Project 5.spec
 update.spec
 Projects/Project_5/__pycache__/Project 5.cpython-36.pyc
 Projects/Project_5/__pycache__/Project 5.cpython-37.pyc
+OptGui/packages
+OptGui/bin
+OptGui/obj
