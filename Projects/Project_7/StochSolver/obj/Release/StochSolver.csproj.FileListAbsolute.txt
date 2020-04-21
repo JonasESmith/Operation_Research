@@ -1,0 +1,9 @@
+B:\Operation_Research\Projects\Project_7\StochSolver\bin\Release\StochSolver.exe.config
+B:\Operation_Research\Projects\Project_7\StochSolver\bin\Release\StochSolver.exe
+B:\Operation_Research\Projects\Project_7\StochSolver\bin\Release\StochSolver.pdb
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.solverForm.resources
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.Properties.Resources.resources
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.csproj.GenerateResource.cache
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.csproj.CoreCompileInputs.cache
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.exe
+B:\Operation_Research\Projects\Project_7\StochSolver\obj\Release\StochSolver.pdb
