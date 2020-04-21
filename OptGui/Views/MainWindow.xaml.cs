@@ -33,17 +33,11 @@ namespace OptGui.Views
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
 
-            // Resize ListView Columns Equally Proportional
-            double remainingSpace = DataList.ActualWidth;
+        }
 
-            if (remainingSpace > 0)
-            {
-                double spacing = Math.Ceiling(remainingSpace / (DataList.View as GridView).Columns.Count - 1);
-                foreach (var col in (DataList.View as GridView).Columns)
-                {
-                    col.Width = spacing;
-                }
-            }
+        private void SetList(List<string> columnsNames, List<List<string>> rows)
+        {
+
         }
     }
 }

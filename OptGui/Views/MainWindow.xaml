@@ -8,9 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:services="clr-namespace:OptGui.Services"
-    Title="MainWindow"
+    Title="Knapsack Problem Solver - Based On Type #19.18"
     Width="800"
-    Height="450"
+    Height="530"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
@@ -21,139 +21,215 @@
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
-    <Grid Name="main">
+    <Window.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </Window.Resources>
+    <Grid Name="main" Margin="2">
         <Grid.Resources>
             <services:KnapsackSolver x:Key="Knapsack" />
         </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="420" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0">
-            <ListView
-                Name="DataList"
-                Margin="10"
-                HorizontalContentAlignment="Center"
-                ItemsSource="{Binding Rows}"
-                Loaded="ListView_Loaded"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                UseLayoutRounding="False">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="150" Header="Names">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox
-                                        Margin="10"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Name, Mode=TwoWay}" />
+        <StackPanel Margin="5" HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Center">
+                <materialDesign:Card MaxHeight="500">
+                    <StackPanel>
+                        <Button
+                            Width="380"
+                            Height="30"
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            Command="{Binding CommandRemoveSelectedRow}"
+                            Content="Remove Selected Row" />
+                        <ListView
+                            Name="DataList"
+                            Height="250"
+                            MinWidth="200"
+                            MaxWidth="380"
+                            MaxHeight="500"
+                            Margin="10"
+                            HorizontalContentAlignment="Center"
+                            ItemsSource="{Binding Rows}"
+                            Loaded="ListView_Loaded"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            SelectedItem="{Binding SelectedRow}"
+                            UseLayoutRounding="False">
+                            <ListView.Resources>
+                                <DataTemplate x:Key="Templ">
+                                    <TextBlock HorizontalAlignment="Center" Text="{Binding}" />
                                 </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Width="150" Header="Weights/Volumes">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox
-                                        Margin="10"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Weight, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Width="150" Header="Values/Money">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox
-                                        Margin="10"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </StackPanel>
-        <StackPanel Grid.Row="1">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Label
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center">
-                    <TextBlock FontSize="14" TextDecorations="Underline">Name</TextBlock>
-                </Label>
-                <Label
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center">
-                    <TextBlock FontSize="14" TextDecorations="Underline">Weight</TextBlock>
-                </Label>
-                <Label
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center">
-                    <TextBlock FontSize="14" TextDecorations="Underline">Value</TextBlock>
-                </Label>
-                <Label
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <services:NullableValueConverter x:Key="NullableValueConverter" />
-                </StackPanel.Resources>
-                <TextBox
-                    Name="tbName"
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox
-                    Name="tbWeight"
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    Text="{Binding Weight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableValueConverter}}" />
-                <TextBox
-                    Name="tbValue"
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableValueConverter}}" />
-                <Button
-                    Width="100"
-                    Height="30"
-                    Margin="5"
-                    Command="{Binding CommandAddRow}"
-                    Content="Add Row" />
-            </StackPanel>
-        </StackPanel>
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal">
+                                <Style x:Key="HeaderStyle" TargetType="GridViewColumnHeader">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                            </ListView.Resources>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="100" Header="Names">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="10"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Name, Mode=OneWay}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="140" Header="Weights/Volumes">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="10"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Weight, Mode=OneWay}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="123" Header="Values/Money">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="10"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Value, Mode=OneWay}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
 
-            <Button
-                Width="120"
-                Height="30"
-                Margin="5"
-                Command="{Binding CommandRemoveSelectedRow}"
-                Content="Remove Row" />
-            <Button
-                Width="80"
-                Height="30"
-                Margin="5"
-                Command="{Binding CommandSolve}"
-                Content="Solve" />
+                    </StackPanel>
+
+                </materialDesign:Card>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Width="80"
+                        Margin="10,5,10,0"
+                        HorizontalContentAlignment="Center">
+                        <TextBlock FontSize="14" TextDecorations="Underline">Name</TextBlock>
+                    </Label>
+                    <Label
+                        Width="80"
+                        Margin="10,5,10,0"
+                        HorizontalContentAlignment="Center">
+                        <TextBlock FontSize="14" TextDecorations="Underline">Weight</TextBlock>
+                    </Label>
+                    <Label
+                        Width="80"
+                        Margin="10,5,10,0"
+                        HorizontalContentAlignment="Center">
+                        <TextBlock FontSize="14" TextDecorations="Underline">Value</TextBlock>
+                    </Label>
+                    <Label
+                        Width="80"
+                        Margin="10,5,10,5"
+                        HorizontalContentAlignment="Center" />
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel.Resources>
+                        <services:NullableValueConverter x:Key="NullableValueConverter" />
+                    </StackPanel.Resources>
+                    <materialDesign:Card Margin="5">
+                        <TextBox
+                            Name="tbName"
+                            Width="80"
+                            Margin="5"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </materialDesign:Card>
+                    <materialDesign:Card Margin="5">
+                        <TextBox
+                            Name="tbWeight"
+                            Width="80"
+                            Margin="5"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding Weight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableValueConverter}}" />
+                    </materialDesign:Card>
+                    <materialDesign:Card Margin="5">
+                        <TextBox
+                            Name="tbValue"
+                            Width="80"
+                            Margin="5"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableValueConverter}}" />
+                    </materialDesign:Card>
+                    <Button
+                        Width="100"
+                        Height="30"
+                        Margin="5"
+                        Command="{Binding CommandAddRow}"
+                        Content="Add Row" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+                <TextBlock TextAlignment="Center" TextDecorations="Underline">Max Value</TextBlock>
+                <materialDesign:Card Margin="5">
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <services:NullableValueConverter x:Key="NullableValueConverter" />
+                        </StackPanel.Resources>
+                        <TextBox
+                            Margin="5"
+                            Text="{Binding MaxValue, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableValueConverter}}"
+                            TextAlignment="Center" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Button
+                        Width="380"
+                        Height="30"
+                        Margin="5"
+                        HorizontalAlignment="Center"
+                        Command="{Binding CommandSolve}"
+                        Content="Solve" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1">
+
+            <materialDesign:Card Margin="5">
+                <StackPanel>
+                    <TextBlock
+                        Margin="5"
+                        HorizontalAlignment="Center"
+                        >
+                        Optimal Policy
+                    </TextBlock>
+                    <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding OptimalCounts.DefaultView}" />
+                </StackPanel>
+
+            </materialDesign:Card>
+            <materialDesign:Card Margin="5">
+                <StackPanel>
+                    <TextBlock
+                        Margin="5"
+                        HorizontalAlignment="Center"
+                        >
+                        Returns and Decisions Table
+                    </TextBlock>
+                    <DataGrid
+                    MaxHeight="300"
+                    Name="DG1"
+                    AutoGenerateColumns="True"
+                    ItemsSource="{Binding StageTable.DefaultView}" />
+                </StackPanel>
+                
+            </materialDesign:Card>
         </StackPanel>
     </Grid>
 </Window>
