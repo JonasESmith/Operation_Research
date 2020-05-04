@@ -3,6 +3,8 @@ import plotly.graph_objects as go
 import pandas
 import random
 
+
+# basic statistic class
 class Stat:
     index = 0
     date = ""
@@ -13,10 +15,9 @@ class Stat:
         self.date = date
         self.newCases = newCases
 
+# returns the forecast based on the stats passed
 def getForecast(Stats, count): 
-    
     n = count - 1
-
     x_sum = 0
     y_sum = 0
     x_square = 0
@@ -31,31 +32,26 @@ def getForecast(Stats, count):
         y_square += stats.newCases * stats.newCases
 
         x_y += stats.index * stats.newCases
-        #print("{0} | {1} | {2} | {3} | {4}".format(stats.index, stats.newCases, stats.index * stats.index, stats.newCases * stats.newCases, stats.index * stats.newCases))
-    
-    # print("{0} | {1} | {2} | {3} | {4}".format(x_sum, y_sum, x_square, y_square, x_y))
 
     a = ((x_square) * (y_sum) - (x_sum)*(x_y)) / ((n)*(x_square) - (x_sum)*(x_sum))
 
     b = ((n) * (x_y) - (x_sum)*(y_sum)) / ((n)*(x_square) - (x_sum)*(x_sum))
-    # print("a = {0} ; b = {1}".format(a,b))
 
     regression = a + b * count
 
     return(regression)
 
+# sumsCases
 def sumCases(Stats):
     cases = 0
     for stat in Stats:
         cases += stat.newCases
     return(cases)
 
-
 Stats = []
-
 count = 0
 
-
+# Loads stats from text file
 with open("data.txt", "r") as filestream:
     for line in filestream:
         stats = line.split("*")
@@ -63,27 +59,26 @@ with open("data.txt", "r") as filestream:
         Stats.append(Stat(count ,stats[0], int(stat_cases)))
         count += 1
 
-print(getForecast(Stats, count))
+print("day {0} : cases {1}".format(count, getForecast(Stats, count)))
+print()
+print("quarantine")
 
-# print(count)
-
-print("With current social distancing methods")
+numDays = 7
 
 # continues to forcast a week ahead of time, with current trends of staying home.
-for x in range(7):
+for x in range(numDays):
     forValue = getForecast(Stats, count)
     forValue = forValue * random.uniform(2.4, 2.9) * 0.2143
     print("{0} : {1}".format(count, forValue))
     Stats.append(Stat(count, "new date", int(forValue)))
     count+=1
 
-print(getForecast(Stats, count))
-
 socialDistance = sumCases(Stats)
 
-print(socialDistance)
+print("{0} total cases for 05/10/2020".format(socialDistance))
 print()
 
+# copy Stats with quarantine
 StatZero = Stats.copy()
 
 # remove changes made with the most recent predictions.
@@ -91,34 +86,25 @@ for x in range(7):
     Stats.pop()
     count += (-1)
 
-# now we will add an increase in the amount of nubmers people are seeing each other
-# so using the number given from the Journal of Travel Medicine we can see that from many different
-# countries the travel rate of covide ranges from 1.4 to 6.49 we will use the median which is 2.79.
-# For our purposes we will lower this number as hopefully people will be more careful we will be usin 2.
-# now let us forecast an additional week into the future. For the seasonal flue that has a reproduction rate of
-# 1.28 this means that for every 100 people that have it they will pass it on to n additional 128 people.
+print("non-quarantine")
 
-print(getForecast(Stats, count))
-
-print("Removing social distancing methods and 'reopening' states")
-
-for x in range(7):
+for x in range(numDays):
     forValue = getForecast(Stats, count)
     forValue = forValue * random.uniform(2.4, 2.9) * 0.7857
     print("{0} : {1}".format(count, forValue))
     Stats.append(Stat(count, "new date", int(forValue)))
     count+=1
 
+# copy stats for non-quarantine
 StatOne = Stats.copy()
 
 noSociDistance = sumCases(Stats)
-
-print(getForecast(Stats, count))
-print(noSociDistance)
-
+print("{0} total cases for 05/10/2020".format(noSociDistance))
 newCases = noSociDistance - socialDistance
 
-print("One week difference of social distancing vs non social distancing is an additional {0} # of cases".format(newCases))
+print("new cases = {0}, without quarantine".format(newCases))
+print()
+input("press any key to graph results")
 
 index = 0
 days = []
